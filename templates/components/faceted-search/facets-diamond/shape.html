@@ -15,9 +15,9 @@
                 <li class="navList-item">
                     <span class="facet-img">
                         {{#if title '===' 'CUSHION BRILLIANT'}}
-                            <img src="/assets/img/diamonds/shape/asscher.png" />
+                            <img src="{{cdn '/assets/img/diamonds/shape/asscher.png'}}" />
                         {{else}}
-                            <img src="/assets/img/diamonds/shape/{{toLowerCase title}}.png" />
+                            <img src="{{cdn (concat '/assets/img/diamonds/shape/' (toLowerCase title)) }}.png" />
                         {{/if}}
                     </span>
                     <span class="facet-name">{{ title }}</span>
