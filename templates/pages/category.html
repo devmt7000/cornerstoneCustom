@@ -12,8 +12,22 @@ category:
     {{#if pagination.category.next}}
         <link rel="next" href="{{pagination.category.next}}">
     {{/if}}
-{{/partial}}
+    
+    {{{stylesheet 'assets/vendor/jquery-ui-1.12.1.custom/jquery-ui.min.css'}}}
+      {{{stylesheet 'assets/vendor/ion.rangeSlider-2.2.0/css/ion.rangeSlider.css'}}}
+    {{{stylesheet 'assets/vendor/ion.rangeSlider-2.2.0/css/ion.rangeSlider.skinHTML5.css'}}}
 
+{{/partial}}
+    <div class="overlay"></div>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-cookies.min.js"></script>
+    <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+        display: none !important;
+     }
+    </style>
 {{#partial "page"}}
 
 {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
@@ -21,28 +35,46 @@ category:
     <img class="lazyload" data-sizes="auto" src="{{cdn 'img/loading.svg'}}" data-src="{{getImage category.image 'zoom_size'}}">
 {{/if}}
 <h1 class="page-heading">{{category.name}}</h1>
-{{{category.description}}}
-{{{snippet 'categories'}}}
-<div class="page">
-    {{#or category.subcategories category.faceted_search_enabled}}
-        <aside class="page-sidebar" id="faceted-search-container">
-            {{> components/category/sidebar}}
-        </aside>
-    {{else}}
-        {{#if theme_settings.shop_by_price_visible}}
-            <aside class="page-sidebar" id="faceted-search-container">
-                {{> components/category/sidebar}}
-            </aside>
-        {{/if}}
-    {{/or}}
-    <main class="page-content" id="product-listing-container">
-        {{#if category.products}}
-            {{> components/category/product-listing}}
-        {{else}}
-            <p>{{lang 'categories.no_products'}}</p>
-        {{/if}}
-    </main>
-</div>
 
+{{{snippet 'categories'}}}
+
+<div class="page diamond">
+    <div id="diamond-shortlisted-tab">
+          <ul class="nav nav-tabs">
+            <li><a href="#diamondsTab" >Diamonds</a></li>
+            <li><a href="#shortlistedTab">Shortlisted (<span class="totalShortlistedDiamonds">0</span>)</a></li>
+          </ul>
+       
+
+        <div id="diamondsTab">
+
+            {{#or category.subcategories category.faceted_search_enabled}}
+                {{> components/category/sidebar-diamond}}
+            {{else}}
+                {{#if theme_settings.shop_by_price_visible}}
+                    <aside class="page-sidebar" id="faceted-search-container">
+                        {{> components/category/sidebar-diamond}}
+                    </aside>
+                {{/if}}
+            {{/or}}
+            <main id="product-listing-container">
+                {{#if category.products}}
+                    {{> components/diamond/product-list}}
+                {{else}}
+                    <p>{{lang 'categories.no_products'}}</p>
+                {{/if}}
+            </main>
+         </div>
+   
+        <div id="shortlistedTab">
+            <main>
+             {{> components/diamond/product-list selected=true}}
+            </main>
+        </div>
+    </div>
+</div>
 {{/partial}}
+
+{{{category.description}}}
+
 {{> layout/base}}

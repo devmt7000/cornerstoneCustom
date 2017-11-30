@@ -213,6 +213,13 @@
                 </li>
             {{/each}}
         </ul>
+        {{#each product.custom_fields}}
+             {{#if name '===' 'Video'}}
+                <div class="productView-video">
+                    <a href="#" class="button button--small quickviewvideo" data-video-id="{{value}}" >{{lang 'products.videos.view_video'}}</a>
+                </div>
+            {{/if}}
+        {{/each}}
     </section>
 
     <section class="productView-details">
@@ -279,5 +286,15 @@
         <span aria-hidden="true">&#215;</span>
     </a>
     <div class="modal-content"></div>
+    <div class="loadingOverlay"></div>
+</div>
+
+<div id="previewModalVideo" class="modal modal--large" data-reveal>
+    <a href="#" class="modal-close" aria-label="{{lang 'common.close'}}" role="button">
+        <span aria-hidden="true">&#215;</span>
+    </a>
+    <div class="modal-content">
+         {{> components/products/quick-view-video schema=false}}        
+    </div>
     <div class="loadingOverlay"></div>
 </div>

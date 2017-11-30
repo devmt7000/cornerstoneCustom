@@ -125,3 +125,129 @@
         font-weight: bold;
     }
 }
+
+
+.diamond {
+    .facetedSearch{
+        
+        .facetedSearch-navList{
+            background-color:navajowhite;
+        }
+        
+        .accordion-block{
+            position: relative;
+            min-height: 150px;
+            @include breakpoint("small") {
+                @include grid-column(6);
+            }            
+            @include breakpoint("medium") {
+                @include grid-column(6);
+            }
+            @include breakpoint("large") {
+                @include grid-column(4);
+            }
+            
+            .navList {
+                
+                .navList-item{
+                    min-height: 110px;
+                    display: inline-block;
+                    margin:3px;
+
+                    + .is-selected{
+                        background-color: green;
+                    }
+                }
+                .navList-item:first-child {
+                    margin-left: 0px;
+                }                    
+                    
+            }
+                        
+            #facetedSearch-content--Shape {
+                
+                
+                .navList-item{
+                    min-width: 73px;                   
+                    margin: 0 2px 10px 2px !important;
+                    text-align: center;
+                    @include breakpoint("small") {
+                        @include grid-column(3);
+                    }            
+                    @include breakpoint("medium") {
+                        @include grid-column(2);
+                    }
+                    @include breakpoint("large") {
+                        @include grid-column(1);
+                    }
+                    
+                    span{
+                        display: block;
+                    }
+            
+                    .facet-img{
+                        min-height: 50px;
+                        text-align: center;
+                    }
+                   
+                    .facet-name{
+                        font-size: 9px;
+                        min-height: 30px;
+                        text-align: center;
+                        margin: 5px 3px;
+                    }                    
+
+                   .navList-action--checkbox{
+                        width: 16px;
+                        bottom:0;
+                        &:before,
+                        &:after {
+                            top: auto;
+                            bottom: 0;
+                        }
+                    }
+
+                }
+
+            }
+            
+            #facetedSearch-content--price{
+
+                .form-minMaxRow{
+
+                    .form-field{
+                        position:relative;
+                        &:before {
+                            position: absolute;
+                            content: "$";
+                            top: 4px;
+                            left: 10px
+                        }
+                    }  
+                }
+            }
+            .form-minMaxRow{
+                .form-field:last-child{
+                    float: right;
+                    text-align: right;
+                }
+                
+                input{ 
+                    width: 100px;
+                    padding-left: 14px;
+                    padding-top: 4px;
+                }
+            } 
+            
+        }
+        .accordion-block:first-child {
+            @include breakpoint("large") {
+                @include grid-column(8);
+            }
+        }
+        & .range{
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+    }    
+}

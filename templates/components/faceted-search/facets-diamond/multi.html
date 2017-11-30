@@ -1,0 +1,9 @@
+{{#if items}}
+    {{#if facet '===' 'Shape' }}
+        {{>components/faceted-search/facets-diamond/shape }}
+    {{else if facet '===' 'Carat'  }}
+        {{>components/faceted-search/facets-diamond/range}}
+    {{else}}
+        {{>components/faceted-search/facets-diamond/range notNumber='text'}}
+    {{/if}}
+{{/if}}

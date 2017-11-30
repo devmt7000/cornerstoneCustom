@@ -57,3 +57,43 @@
     font-size: fontSize("base");
     margin-bottom: 0;
 }
+
+.video-main {
+    width:90%;
+    margin: 0px auto;
+
+    @include breakpoint("medium") {
+        @include grid-column(
+            $columns: 8,
+            $center: true
+        );
+    }
+
+    @include breakpoint("large") {
+        @include grid-column(
+            $columns: 6,
+            $center: true
+        );
+    }
+    
+    iframe {
+
+        @include breakpoint("small") {
+            height: 550px;
+            width: 85%;
+        }
+
+        @include breakpoint("medium") {
+            height: 600px;
+            width: 90%;
+        }
+
+        @include breakpoint("large") {
+            height: 700px;
+        }
+    }
+}
+
+.quickViewVideo {
+    max-height: 100% !important;
+}

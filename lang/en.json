@@ -648,7 +648,8 @@
         "videos": {
             "header": "Videos",
             "hide": "Hide Videos",
-            "show": "Show Videos"
+            "show": "Show Videos",
+            "view_video": "View Video"
         },
         "add_to_cart": "Add to Cart",
         "adding_to_cart": "Adding to cart…",
