@@ -8,7 +8,7 @@ import collapsibleFactory from './collapsible';
 import { Validators } from './form-utils';
 import nod from './nod';
 import { ConfigDiamond } from '../diamond/config-diamond';
-import ionRangeSlider from 'ion-range-slider';
+import 'ion-range-slider';
 /**
  * Faceted search view component
  */
@@ -34,7 +34,6 @@ class FacetedSearchDiamond {
      * let facetedSearch = new FacetedSearch(requestOptions, templatesDidLoad);
      */
     constructor(requestOptions, callback, options) {
-
         const defaultOptions = {
             accordionToggleSelector: '#facetedSearchDiamond .accordion-navigation, #facetedSearchDiamond .facetedSearch-toggle',
             blockerSelector: '#facetedSearchDiamond .blocker',
@@ -246,160 +245,134 @@ class FacetedSearchDiamond {
     }
 
     onlyNumbers(e, goods) {
-      const key = this.getKey(e);
+        const key = this.getKey(e);
         if (key === null) {
             return true;
         }
       // get character
         let keychar = String.fromCharCode(key);
         keychar = keychar.toLowerCase();
-        goods = goods.toLowerCase();
-      // check goodkeys
-        if (goods.indexOf(keychar) !== -1) {
+        const goodsLower = goods.toLowerCase();
+        // check goodkeys
+        if (goodsLower.indexOf(keychar) !== -1) {
             return true;
         }
-      // control keys
-      if (key === null || key === 0 || key === 8 || key === 9 || key === 13 || key === 27) {
-          return true;
-      }
-      // else return false
-      return false;
+        // control keys
+        if (key === null || key === 0 || key === 8 || key === 9 || key === 13 || key === 27) {
+            return true;
+        }
+        // else return false
+        return false;
     }
-    
+
     getKey(e) {
-      if (window.event) {
-          return window.event.keyCode;
-      }
-      else if (e) {
-          return e.which;
-      }
-      else {
-          return null;
-      }
+        if (window.event) {
+            return window.event.keyCode;
+        } else if (e) {
+            return e.which;
+        }
+        return null;
     }
-    
-    initRangeSliders(){        
+
+    initRangeSliders() {
         if ($(this.options.facetedRangeSlider).length === 0) {
             return;
-        }  
-
+        }
         const $slider = $(this.options.facetedRangeSlider);
-        
-        let parent = this;
-
+        const parent = this;
         $slider.each((index, slide) => {
-            let facet = $(slide).attr("facet");
-            
-            switch(facet){
-                
-                case ConfigDiamond.types.price.name : 
-                   
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        min: ConfigDiamond.types.price.range.min,
-                        max: ConfigDiamond.types.price.range.max,
-                        from: ConfigDiamond.types.price.range.min,
-                        to: ConfigDiamond.types.price.range.max,
-                        step: 100
-                    });
-                    break;
-                    
-                case ConfigDiamond.types.carat.name :
-                                        
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        step: 0.5,
-                        min: ConfigDiamond.types.carat.range.min,
-                        max: ConfigDiamond.types.carat.range.max,
-                        from: ConfigDiamond.types.carat.range.min,
-                        to: ConfigDiamond.types.carat.range.max
-                    });                    
-                    
-                    break;
-                    
-                case ConfigDiamond.types.color.name :
-                    
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        values: ConfigDiamond.types.color.values ,
-                        grid: true
-                    });                    
-                    
-                    break;  
-                case ConfigDiamond.types.clarity.name :
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        values: ConfigDiamond.types.clarity.values ,
-                        grid: true
-                    });                    
-                    
-                    break;
-                case ConfigDiamond.types.cut.name :
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        values: ConfigDiamond.types.cut.values ,
-                        grid: true
-                    });                    
-                    
-                    break;
-                
-                case ConfigDiamond.types.polish.name :
-                    
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        values: ConfigDiamond.types.polish.values ,
-                        grid: true
-                    });                    
-                    
-                    break;  
-                case ConfigDiamond.types.symmetry.name :
+            const facet = $(slide).attr('facet');
 
-                    $(slide).ionRangeSlider({
-                        hide_min_max: true,
-                        keyboard: true,
-                        type: "double",
-                        min_interval: 0,
-                        values: ConfigDiamond.types.symmetry.values ,
-                        grid: true
-                    });                    
-                    
-                    break;                 
-                default:
-                    console.log("No Action:"+facet.toString());
-                    break;
+            switch (facet) {
+            case ConfigDiamond.types.price.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    min: ConfigDiamond.types.price.range.min,
+                    max: ConfigDiamond.types.price.range.max,
+                    from: ConfigDiamond.types.price.range.min,
+                    to: ConfigDiamond.types.price.range.max,
+                    step: 100,
+                });
+                break;
+            case ConfigDiamond.types.carat.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    step: 0.5,
+                    min: ConfigDiamond.types.carat.range.min,
+                    max: ConfigDiamond.types.carat.range.max,
+                    from: ConfigDiamond.types.carat.range.min,
+                    to: ConfigDiamond.types.carat.range.max,
+                });
+                break;
+            case ConfigDiamond.types.color.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    values: ConfigDiamond.types.color.values,
+                    grid: true,
+                });
+                break;
+            case ConfigDiamond.types.clarity.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    values: ConfigDiamond.types.clarity.values,
+                    grid: true,
+                });
+                break;
+            case ConfigDiamond.types.cut.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    values: ConfigDiamond.types.cut.values,
+                    grid: true,
+                });
+                break;
+            case ConfigDiamond.types.polish.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    values: ConfigDiamond.types.polish.values,
+                    grid: true,
+                });
+                break;
+            case ConfigDiamond.types.symmetry.name :
+                $(slide).ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    values: ConfigDiamond.types.symmetry.values,
+                    grid: true,
+                });
+                break;
+            default:
+                break;
             }
-            
-            
-            $(slide).parent().find("fieldset input").on("keypress" , function (event) {
+            $(slide).parent().find('fieldset input').on('keypress', (event) => {
                 if (event.which === 13) {
                     $(this).trigger('blur');
                     $(this).focus();
                 }
                 return parent.onlyNumbers(event, '1234567890.');
             });
-    
         });
-        
     }
-    
+
     // Private methods
     initPriceValidator() {
         if ($(this.options.priceRangeFormSelector).length === 0) {
@@ -419,8 +392,6 @@ class FacetedSearchDiamond {
 
         this.priceRangeValidator = validator;
     }
-
-
 
     restoreCollapsedFacetItems() {
         const $navLists = $(this.options.facetNavListSelector);
