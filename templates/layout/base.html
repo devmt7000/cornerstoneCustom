@@ -34,7 +34,13 @@
 
         <script>window.__webpack_public_path__ = "{{cdn 'assets/dist/'}}";</script>
         <script src="{{cdn 'assets/dist/theme-bundle.main.js'}}"></script>
-
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script>window.__ionSlider__ = $;</script>
+        <script src="{{cdn 'assets/vendor/ion.rangeSlider-2.2.0/js/ion-rangeSlider/ion.rangeSlider.js'}}"></script>
+        <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script-->
+        <script src="{{cdn 'assets/js/controllers/config-diamond.js'}}"></script>
+        <script>window.__configDiamond__ = ConfigDiamond;</script>
+        <script src="{{cdn 'assets/js/controllers/DiamondsController.js'}}"></script>
         <script>
             // Exported in app.js
             window.stencilBootstrap("{{page_type}}", {{jsContext}}).load();

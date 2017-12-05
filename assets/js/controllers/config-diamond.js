@@ -1,4 +1,4 @@
-const ConfigDiamond = {
+const ConfigDiamond = { // eslint-disable-line
     pos: {
         SHAPE: 0,
         PRICE: 1,
@@ -55,4 +55,3 @@ const ConfigDiamond = {
         },
     ],
 };
-export { ConfigDiamond };

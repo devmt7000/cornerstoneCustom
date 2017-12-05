@@ -4,8 +4,6 @@ import $ from 'jquery';
 import FacetedSearch from './common/faceted-search';
 import FacetedSearchDiamond from './common/faceted-search-diamond';
 import 'jquery-ui';
-import 'angular';
-
 
 export default class Category extends CatalogPage {
     loaded() {
@@ -87,7 +85,6 @@ export default class Category extends CatalogPage {
     setContextDiamonds() {
         /* global angular:true*/
         /* slint no-undef: "error"*/
-
         const $scope = angular.element($('#bodyDiamondsController')).scope();
         $scope.setContext(this.context);
     }

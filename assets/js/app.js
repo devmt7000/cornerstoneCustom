@@ -3,7 +3,8 @@ __webpack_public_path__ = window.__webpack_public_path__; // eslint-disable-line
 import 'babel-polyfill';
 import $ from 'jquery';
 import Global from './theme/global';
-import 'diamondsApp';
+import angular from 'angular'; // eslint-disable-line
+import ngCookies from 'ngCookies'; // eslint-disable-line
 
 const getAccount = () => import('./theme/account');
 const getLogin = () => import('./theme/auth');

@@ -1,20 +1,12 @@
-require('angular');
-import { ConfigDiamond } from '../theme/diamond/config-diamond';
-
-/* global angular:true*/
-/* global $:true*/
-/* slint no-undef: "error"*/
-/* eslint no-param-reassign: ["error", {"props": false }]*/
-/* eslint func-names: ["error", "never"] */
-/* eslint wrap-iife: ["error", "inside"] */
-(function () {
+(() => {
     'use strict';
-    const app = angular.module('diamondsApp', []);
-    app.config(($interpolateProvider) => {
-        $interpolateProvider.startSymbol('{/');
-        $interpolateProvider.startSymbol('/}');
-    });
-    app.controller('diamondsController', ['$scope', '$filter', ($scope, $filter) => {
+    function DiamondController($scope, $filter) {
+        /* global angular:true*/
+        /* global ConfigDiamond:true*/
+        /* global $:true*/
+        /* eslint no-undef: "error"*/
+        /* eslint no-param-reassign: ["error", {"props": false }]*/
+
         $scope.init = () => {
             $scope.diamonds = [];
             $scope.shape = $('#facetedSearch-content--shape');
@@ -40,8 +32,10 @@ import { ConfigDiamond } from '../theme/diamond/config-diamond';
             }
 
             let range = $($scope.price).data('ionRangeSlider');
+
             delete query.min_price;
             delete query.max_price;
+
             if (range.result.min !== range.result.from || range.result.max !== range.result.to) {
                 query.min_price = range.result.from;
                 query.max_price = range.result.to;
@@ -92,10 +86,6 @@ import { ConfigDiamond } from '../theme/diamond/config-diamond';
             return urlObj;
         };
 
-        $scope.getProducts = (function () {
-            return;
-        })();
-
         $scope.order = (predicate, e) => {
             $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
             $scope.predicate = predicate;
@@ -118,9 +108,12 @@ import { ConfigDiamond } from '../theme/diamond/config-diamond';
             }
             $scope.getdata();
         };
+    }
 
-        $scope.getdata = (function () {
-            return null;
-        })();
-    }]);
+    angular.module('diamondsApp', ['ngCookies']).
+            controller('diamondsController', ['$scope', '$filter', DiamondController]).
+            config(($interpolateProvider) => {
+                $interpolateProvider.startSymbol('{/');
+                $interpolateProvider.startSymbol('/}');
+            });
 })();

@@ -6,9 +6,6 @@ import urlUtils from './url-utils';
 import modalFactory from '../global/modal';
 import collapsibleFactory from './collapsible';
 import nod from './nod';
-import { ConfigDiamond } from '../diamond/config-diamond';
-import 'ion-range-slider';
-
 
 /**
  * Faceted search view component
@@ -35,6 +32,9 @@ class FacetedSearchDiamond {
      * let facetedSearch = new FacetedSearch(requestOptions, templatesDidLoad);
      */
     constructor(requestOptions, callback, options) {
+        this.ionSlider = window.__ionSlider__;
+        this.ConfigDiamond = ({ config: window.__configDiamond__ }).config;
+
         const defaultOptions = {
             accordionToggleSelector: '#facetedSearchDiamond .accordion-navigation, #facetedSearchDiamond .facetedSearch-toggle',
             blockerSelector: '#facetedSearchDiamond .blocker',
@@ -272,21 +272,21 @@ class FacetedSearchDiamond {
             let $to = 0;
             let idx = -1;
             const type = $facet.attr('facet');
-            if (type === ConfigDiamond.types[ConfigDiamond.pos.PRICE].name ||
-                    type === ConfigDiamond.types[ConfigDiamond.pos.CARAT].name) {
-                idx = type === ConfigDiamond.types[ConfigDiamond.pos.PRICE].name ? ConfigDiamond.pos.PRICE : ConfigDiamond.pos.CARAT;
-                const config = ConfigDiamond.types[idx];
+            if (type === this.ConfigDiamond.types[this.ConfigDiamond.pos.PRICE].name ||
+                    type === this.ConfigDiamond.types[this.ConfigDiamond.pos.CARAT].name) {
+                idx = type === this.ConfigDiamond.types[this.ConfigDiamond.pos.PRICE].name ? this.ConfigDiamond.pos.PRICE : this.ConfigDiamond.pos.CARAT;
+                const config = this.ConfigDiamond.types[idx];
                 $from = config.range.min;
                 $to = config.range.max;
 
-                if (type === ConfigDiamond.types[ConfigDiamond.pos.PRICE].name) {
+                if (type === this.ConfigDiamond.types[this.ConfigDiamond.pos.PRICE].name) {
                     if (urlObj.query.min_price) {
                         $from = urlObj.query.min_price;
                     }
                     if (urlObj.query.min_price) {
                         $to = urlObj.query.max_price;
                     }
-                } else if (type === ConfigDiamond.types[ConfigDiamond.pos.CARAT].name) {
+                } else if (type === this.ConfigDiamond.types[this.ConfigDiamond.pos.CARAT].name) {
                     if (urlObj.query[config.id] && urlObj.query[config.id].length > 0) {
                         if (Array.isArray(urlObj.query[config.id])) {
                             urlObj.query[config.id].sort(parent.orderValues);
@@ -299,7 +299,7 @@ class FacetedSearchDiamond {
                     }
                 }
 
-                $facet.ionRangeSlider({
+                this.ionSlider($facet).ionRangeSlider({
                     hide_min_max: true,
                     keyboard: true,
                     type: 'double',
@@ -313,20 +313,20 @@ class FacetedSearchDiamond {
                 });
             } else {
                 switch (type) {
-                case ConfigDiamond.types[ConfigDiamond.pos.COLOR].name :
-                    idx = ConfigDiamond.pos.COLOR;
+                case this.ConfigDiamond.types[this.ConfigDiamond.pos.COLOR].name :
+                    idx = this.ConfigDiamond.pos.COLOR;
                     break;
-                case ConfigDiamond.types[ConfigDiamond.pos.CLARITY].name :
-                    idx = ConfigDiamond.pos.CLARITY;
+                case this.ConfigDiamond.types[this.ConfigDiamond.pos.CLARITY].name :
+                    idx = this.ConfigDiamond.pos.CLARITY;
                     break;
-                case ConfigDiamond.types[ConfigDiamond.pos.CUT].name :
-                    idx = ConfigDiamond.pos.CUT;
+                case this.ConfigDiamond.types[this.ConfigDiamond.pos.CUT].name :
+                    idx = this.ConfigDiamond.pos.CUT;
                     break;
-                case ConfigDiamond.types[ConfigDiamond.pos.POLISH].name :
-                    idx = ConfigDiamond.pos.POLISH;
+                case this.ConfigDiamond.types[this.ConfigDiamond.pos.POLISH].name :
+                    idx = this.ConfigDiamond.pos.POLISH;
                     break;
-                case ConfigDiamond.types[ConfigDiamond.pos.SYMMETRY].name :
-                    idx = ConfigDiamond.pos.SYMMETRY;
+                case this.ConfigDiamond.types[this.ConfigDiamond.pos.SYMMETRY].name :
+                    idx = this.ConfigDiamond.pos.SYMMETRY;
                     break;
                 default:
                     idx = -1;
@@ -334,34 +334,34 @@ class FacetedSearchDiamond {
                 }
 
                 if (idx > 0) {
-                    $from = ConfigDiamond.types[idx].values.length - 1;
+                    $from = this.ConfigDiamond.types[idx].values.length - 1;
                     $to = 0;
 
-                    if (urlObj.query[ConfigDiamond.types[idx].id] && urlObj.query[ConfigDiamond.types[idx].id].length > 0) {
-                        if (Array.isArray(urlObj.query[ConfigDiamond.types[idx].id])) {
-                            for (const value of urlObj.query[ConfigDiamond.types[idx].id]) {
-                                const key = ConfigDiamond.types[idx].keys.indexOf(value);
+                    if (urlObj.query[this.ConfigDiamond.types[idx].id] && urlObj.query[this.ConfigDiamond.types[idx].id].length > 0) {
+                        if (Array.isArray(urlObj.query[this.ConfigDiamond.types[idx].id])) {
+                            for (const value of urlObj.query[this.ConfigDiamond.types[idx].id]) {
+                                const key = this.ConfigDiamond.types[idx].keys.indexOf(value);
                                 if (key !== -1) {
                                     $from = (key < $from) ? key : $from;
                                     $to = (key > $to) ? key : $to;
                                 }
                             }
                         } else {
-                            $from = urlObj.query[ConfigDiamond.types[idx].id];
+                            $from = urlObj.query[this.ConfigDiamond.types[idx].id];
                             $to = $from;
                         }
                     }
-                    if ($to === 0 && $from === ConfigDiamond.types[idx].values.length - 1) {
+                    if ($to === 0 && $from === this.ConfigDiamond.types[idx].values.length - 1) {
                         $to = $from;
                         $from = 0;
                     }
 
-                    $facet.ionRangeSlider({
+                    this.ionSlider($facet).ionRangeSlider({
                         hide_min_max: true,
                         keyboard: true,
                         type: 'double',
                         min_interval: 0,
-                        values: ConfigDiamond.types[idx].values,
+                        values: this.ConfigDiamond.types[idx].values,
                         grid: true,
                         onFinish: this.fireRequestFacetRange,
                         from: $from,
@@ -385,7 +385,7 @@ class FacetedSearchDiamond {
 
                 $(input).on('change', (event) => {
                     const inputSlider = $(event.currentTarget);
-                    const slider = $('#'.concat(inputSlider.attr('facet'))).data('ionRangeSlider');
+                    const slider = parent.ionSlider('#'.concat(inputSlider.attr('facet'))).data('ionRangeSlider');
                     if (parent.validateRangeField(event) === true) {
                         const range = String(inputSlider.attr('id')).split('_')[0];
                         if (range === 'min') {
@@ -437,7 +437,7 @@ class FacetedSearchDiamond {
         const parent = $input.parent();
         const ranges = String($input.attr('id')).split('_');
         const range = ranges[0];
-        const slider = $('#'.concat($input.attr('facet'))).data('ionRangeSlider');
+        const slider = this.ionSlider('#'.concat($input.attr('facet'))).data('ionRangeSlider');
         const error = parent.find('#'.concat($input.attr('id'), '-error'));
 
         this.clearMessageError(parent);
@@ -481,8 +481,8 @@ class FacetedSearchDiamond {
         const $this = $(event.currentTarget);
         const name = $this.attr('facet');
         switch (name) {
-        case ConfigDiamond.types[ConfigDiamond.pos.PRICE].name:
-        case ConfigDiamond.types[ConfigDiamond.pos.CARAT].name :
+        case this.ConfigDiamond.types[this.ConfigDiamond.pos.PRICE].name:
+        case this.ConfigDiamond.types[this.ConfigDiamond.pos.CARAT].name :
             $this.parent().find('fieldset input').each((__, input) => {
                 this.clearMessageError($(input).parent());
             });
