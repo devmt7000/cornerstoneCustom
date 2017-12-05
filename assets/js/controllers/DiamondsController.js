@@ -1,5 +1,5 @@
-import 'angular';
-import 'angular-cookies';
+require('angular');
+require('angular-cookies');
 import { ConfigDiamond } from '../theme/diamond/config-diamond';
 
 /* global angular:true*/
