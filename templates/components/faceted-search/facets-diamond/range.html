@@ -1,26 +1,22 @@
  <div class="accordion-block range">
-    <div
-        class="accordion-navigation toggleLink {{#unless ../start_collapsed }} is-open {{/unless}}"
-        role="button"
-        data-collapsible="#facetedSearch-content--{{hyphenate facet }}">
+     <div>
         <h4 class="accordion-title">
-            {{ title }}
-        </h4>
+               {{ title }}
+       </h4>
     </div>
-
     <div id="facetedSearch-content--{{hyphenate facet }}" class="accordion-content {{#unless ../start_collapsed }} is-open {{/unless}}">
-        <input class="range-slider" facet="{{toLowerCase title }}" id="range-{{toLowerCase title }}" />
+        <input class="range-slider" facet="{{toLowerCase title }}"  id="range-{{toLowerCase title }}" />
         {{#if notNumber '!==' 'text' }}
             <fieldset class="form-fieldset">
                 <div class="form-minMaxRow">
                     <div class="form-field">
-                        <input name="min-{{hyphenate facet }}" id="min-{{hyphenate facet }}"  />
-                        <span id="min-{{toLowerCase title }}-error" class="error-message"></span>
+                        <input name="min_{{toLowerCase title }}" id="min_{{toLowerCase title }}"  />
+                        <div id="min_{{toLowerCase title }}-error" class="form-inlineMessage"></div>
                     </div>
 
                     <div class="form-field">
-                        <input name="max-{{hyphenate facet }}" id="min-{{hyphenate facet }}" />
-                        <span id="max-{{toLowerCase title }}-error" class="error-message"></span>
+                        <input name="max_{{hyphenate facet }}" id="max_{{toLowerCase title }}" />
+                        <div id="max_{{toLowerCase title }}-error" class="form-inlineMessage"></div>
                     </div>
                 </div> 
             </fieldset>

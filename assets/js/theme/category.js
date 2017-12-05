@@ -4,6 +4,8 @@ import $ from 'jquery';
 import FacetedSearch from './common/faceted-search';
 import FacetedSearchDiamond from './common/faceted-search-diamond';
 import 'jquery-ui';
+import 'angular';
+
 
 export default class Category extends CatalogPage {
     loaded() {
@@ -53,7 +55,6 @@ export default class Category extends CatalogPage {
 
     initFacetedSearchDiamond() {
         const $productListingContainer = $('#product-listing-container');
-        const $facetedSearchContainer = $('#faceted-search-container');
         const productsPerPage = this.context.categoryProductsPerPage;
         const requestOptions = {
             config: {
@@ -65,19 +66,29 @@ export default class Category extends CatalogPage {
                 },
             },
             template: {
-                productListing: 'category/product-listing-diamond',
-                sidebar: 'category/sidebar-diamond',
+                context: 'diamond/context',
+                sidebar: 'diamond/context',
             },
-            showMore: 'category/show-more',
+            showMore: 'diamond/context',
         };
 
+        this.setContextDiamonds();
+
         this.facetedSearch = new FacetedSearchDiamond(requestOptions, (content) => {
-            $productListingContainer.html(content.productListing);
-            $facetedSearchContainer.html(content.sidebar);
+            $productListingContainer.html(content.context);
+            this.setContextDiamonds();
 
             $('html, body').animate({
                 scrollTop: 0,
             }, 100);
         });
+    }
+
+    setContextDiamonds() {
+        /* global angular:true*/
+        /* slint no-undef: "error"*/
+
+        const $scope = angular.element($('#bodyDiamondsController')).scope();
+        $scope.setContext(this.context);
     }
 }

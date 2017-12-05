@@ -18,16 +18,7 @@ category:
     {{{stylesheet 'assets/vendor/ion.rangeSlider-2.2.0/css/ion.rangeSlider.skinHTML5.css'}}}
 
 {{/partial}}
-    <div class="overlay"></div>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-cookies.min.js"></script>
-    <style>
-    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-        display: none !important;
-     }
-    </style>
+
 {{#partial "page"}}
 
 {{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
@@ -44,8 +35,6 @@ category:
             <li><a href="#diamondsTab" >Diamonds</a></li>
             <li><a href="#shortlistedTab">Shortlisted (<span class="totalShortlistedDiamonds">0</span>)</a></li>
           </ul>
-       
-
         <div id="diamondsTab">
 
             {{#or category.subcategories category.faceted_search_enabled}}
@@ -53,13 +42,24 @@ category:
             {{else}}
                 {{#if theme_settings.shop_by_price_visible}}
                     <aside class="page-sidebar" id="faceted-search-container">
-                        {{> components/category/sidebar-diamond}}
+                        {{> components/category/sidebar}}
                     </aside>
                 {{/if}}
             {{/or}}
             <main id="product-listing-container">
                 {{#if category.products}}
-                    {{> components/diamond/product-list}}
+{{> components/products/filter sort=pagination.category.sort}}
+
+<form action="{{urls.compare}}" method='POST' data-product-compare>
+    {{#if theme_settings.product_list_display_mode '===' 'grid'}}
+        {{> components/products/grid products=category.products show_compare=category.show_compare theme_settings=theme_settings}}
+    {{else}}
+        {{> components/products/list products=category.products show_compare=category.show_compare theme_settings=theme_settings}}
+    {{/if}}
+</form>
+
+{{> components/common/paginator pagination.category}}
+
                 {{else}}
                     <p>{{lang 'categories.no_products'}}</p>
                 {{/if}}

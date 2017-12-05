@@ -90,7 +90,10 @@ module.exports = {
             'slick-carousel': path.resolve(__dirname, 'node_modules/slick-carousel/slick/slick.min.js'),
             sweetalert2: path.resolve(__dirname, 'node_modules/sweetalert2/dist/sweetalert2.min.js'),
             'jquery-ui': path.resolve(__dirname, 'assets/vendor/jquery-ui-1.12.1.custom/jquery-ui.min.js'),
-            'ion-range-slider': path.resolve(__dirname, 'assets/vendor/ion.rangeSlider-2.2.0/js/ion-rangeSlider/ion.rangeSlider.js')  
+            'ion-range-slider': path.resolve(__dirname, 'assets/vendor/ion.rangeSlider-2.2.0/js/ion-rangeSlider/ion.rangeSlider.js'),
+            'angular': path.resolve(__dirname, 'node_modules/angular/angular.min.js'),
+            'angular-cookies': path.resolve(__dirname, 'node_modules/angular-cookies/angular-cookies.min.js'),
+            'diamondsApp': path.resolve(__dirname, 'assets/js/controllers/DiamondsController.js'),
         },
     },
     watch: false,

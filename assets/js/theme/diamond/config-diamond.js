@@ -1,40 +1,58 @@
 const ConfigDiamond = {
-
-    types: {
-        shape: {
+    pos: {
+        SHAPE: 0,
+        PRICE: 1,
+        CARAT: 2,
+        COLOR: 3,
+        CLARITY: 4,
+        CUT: 5,
+        POLISH: 6,
+        SYMMETRY: 7,
+    },
+    types: [
+        {
+            id: 'Shape',
             name: 'shape',
         },
-        price: {
+        {
+            id: 'price',
             name: 'price',
-            range: { min: 100, max: 500000 },
-        },
-        carat: {
+            range: { min: 100, max: 500000, step: 1000 },
+        }, {
+            id: 'Carat',
             name: 'carat',
-            range: { min: 0.01, max: 10.75 },
+            range: { min: 0.01, max: 10.75, step: 0.25 },
         },
-        color: {
+        {
+            id: 'Color',
             name: 'color',
+            keys: ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'N'],
             values: ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'N'],
         },
-        clarity: {
+        {
+            id: 'Clarity',
             name: 'clarity',
-            values: ['FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2'],
+            keys: ['IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2'],
+            values: ['IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2'],
         },
-        cut: {
+        {
+            id: 'Cut',
             name: 'cut',
-            values: ['Ideal', 'Excellent', 'Very Good', 'Good'],
+            keys: ['GD', 'GD2', 'VG', 'VG1', 'VG2', 'EX', 'EX2', 'EX3', 'EX4'],
+            values: ['GD', 'GD2', 'VG', 'VG1', 'VG2', 'EX', 'EX2', 'EX3', 'EX4'],
         },
-        polish: {
+        {
+            id: 'Polish',
             name: 'polish',
-            values: ['Excellent', 'Very Good', 'Good'],
+            keys: ['GD', 'VG', 'EX'],
+            values: ['Good', 'Very Good', 'Excellent'],
         },
-        symmetry: {
+        {
+            id: 'Symmetry',
             name: 'symmetry',
-            values: ['Excellent', 'Very Good', 'Good'],
+            keys: ['GD', 'VG', 'EX'],
+            values: ['Good', 'Very Good', 'Excellent'],
         },
-
-    },
-
+    ],
 };
-
 export { ConfigDiamond };

@@ -1,1 +1,243 @@
-Listing diamonds....
+<span class="clear"></span>
+<div id="diamondsCtrl" class="diamond-control-tbl">
+    <div class="filter-status-result">
+        <span ng-if="isAdvancedFilterApplied" class="filter-status">Advanced filters have been applied</span>
+        <span class="result">Results: <span id="totalCount"></span> <span data-ng-bind="(total > 1 ? 'diamonds' : 'diamond') + ' matched your criteria'"></span></span>
+    </div>
+    <table cellpadding="0" cellspacing="0" border="0">
+        <thead>
+            <tr>
+                <th class="gap-15"><a href="" ng-click="order('shapeVal', $event)">Shape <i class="fa" aria-hidden="true"></i></a></th>
+                <th><a href="" ng-click="order('weight', $event)">Carat <i class="fa" aria-hidden="true"></i></a></th>
+                <th><a href="" ng-click="order('colour', $event)">Colour <i class="fa" aria-hidden="true"></i></a></th>
+                <th><a href="" ng-click="order('clarity', $event)">Clarity <i class="fa" aria-hidden="true"></i></a></th>
+                <th><a href="" ng-click="order('cut', $event)">Cut <i class="fa" aria-hidden="true"></i></a></th>
+                <th align="center"><a href="" ng-click="order('price', $event)">Price (Ex. GST) <i class="fa fa-chevron-up" aria-hidden="true"></i></a></th>
+                <th align="center" title="Canada Mark"><a href="/education/canada-mark/" class="cloumn-head-link" target="_blank">CM</a></th>
+                <th align="center" title="Ice on Fire"><a href="/education/ice-on-fire/" class="cloumn-head-link" target="_blank">IOF</a></th>
+                <th align="center" title="Hearts and Arrows">H&amp;A</th>
+                <th align="center">Shortlist</th>
+                <th colspan="3">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody ng-cloak>
+            <tr ng-if="total == 0">
+                <td colspan="13">
+                    <div class="alert-danger">We do not have a diamond that matches your search criteria. Please search diamonds with another criteria.</div>
+                </td>
+            </tr>
+            <tr ng-repeat="x in diamonds" class="table-bg" id="diamondTr_{/ x.id/}">
+                <td colspan="13">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td class="shape-td gap-15"><img ng-src="{/'http://www.diamondexchange.com.au/template/images/diamond-exchange/diamond-shapes/' + x.shapeVal.toLowerCase() + '.png'/}" alt="View Details" title="View Details" /> <a href="javascript:void(0);" onClick="showDiamondDetails(this.id);" class="shwDmndDtlsCls" id="{/'diamondId_' + x.id/}">{/ x.shapeVal/} <i class="fa fa-caret-down"></i></a></td>
+                            <td class="carat-td">{/ helpers.caratTwoDecimals(x.weight)/}</td>
+                            <td class="colour-clarity-td">{/ x.colour/}</td>
+                            <td class="colour-clarity-td">{/ x.clarity/}</td>
+                            <td class="cut-td">{/ helpers.databaseToHtmlView(x.cut)/}</td>
+                            <td class="price-gst-td" align="center"><strong>{/ x.price | currency /}</strong></td>
+                            <td class="CM-td"><span data-ng-bind="x.canada_mark == 1 ? 'Y' : '&nbsp;'"></span></td>
+                            <td class="IOF-td"><span data-ng-bind="x.ice_on_fire == 1 ? 'Y' : '&nbsp;'"></span></td>
+                            <td class="HA-td"><span data-ng-bind="x.hearts_and_arrows == 1 ? 'Y' : '&nbsp;'"></span></td>
+                            <td class="shortlist-td checkboxCls">
+                                <input type="checkbox" name="shortListDiamond" id="shortListDiamond_{/x.id/}" value="{/x.id/}" ng-click="addDiamondToShortlist(x.id)" />
+                            </td>
+                            <!--<td ng-if="isBuyButtonHidden" class="text-right-align diamondNextStepText" id="diamondNextStepText_{/ x.id /}"></td>-->
+                            <td class="view-diamond-td" align="right"><a href="/diamond-details/?stock={/x.stock_no/}" class="select-diamond-btn" diamond-view>View Diamond</a></td>
+
+                            <td class="select-diamond-td" align="right">
+                                <input type="button" id="diamondSelected_{/x.id/}" value="Select Diamond" class="select-diamond-btn" ng-click="showModal($event)">
+                            </td>
+                        </tr>
+                        <tr class="dmndDtls" id="{/'dmndDtlsId_' + x.id/}">
+                            <td colspan="13">
+                                <div class="product-spec">
+                                    <table cellpadding="0" cellspacing="0" border="0">
+                                        <tr>
+                                            <td valign="top">
+                                                <table>
+                                                    <tr>
+                                                        <td width="{/ x.stone_image  ? 102 : 150 /}" bgcolor=""><img ng-src="{/ x.stone_image ||  'http://www.diamondexchange.com.au/template/images/diamond-exchange/diamond-shapes/sample/' + x.shapeVal.toLowerCase() + '.jpg'/}" /><p class="badges-diamond-type-listing" ng-if="x.stone_image">Actual Diamond</p><p class="badges-diamond-type-listing ng-scope" ng-if="!x.stone_image">Sample Image</p></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td valign="top" width="20"></td>
+                                            <td valign="top">
+                                                <table>
+                                                    <tr>
+                                                        <td>Certificate No:</td>
+                                                        <td colspan="2">{/ x.certificate_no/}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Certified by:</td>
+                                                        <td class="product-result">{/ x.certificate_type/}</td>
+                                                        <td class="product-result"><a href="javascript:void(0);" ng-Click="openPopup(x.certificate_image)" ng-if="x.certificate_image && x.supplier != 'Rapnet'" >View Certificate</a> {/x.certificate_image && x.supplier != 'Rapnet' ? "|" : ""/} <a ng-href="//www.gia.edu/cs/Satellite?reportno={/x.certificate_no/}&childpagename=GIA%2FPage%2FReportCheck&pagename=GIA%2FDispatcher&c=Page&cid={/giaId/}" ng-if="x.certificate_type == 'GIA'" target="_blank">Verify</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Shape:</td>
+                                                        <td class="product-result">{/ x.shapeVal/}</td>
+                                                        <td class="product-result"><a href="http://www.diamondexchange.com.au/education/diamond-cuts/">Learn More</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Polish:</td>
+                                                        <td class="product-result">{/ helpers.databaseToHtmlView(x.polish)/}</td>
+                                                        <td class="product-result"><a href="http://www.diamondexchange.com.au/education/diamonds-explained-4c-s/">Learn More</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Symmetry:</td>
+                                                        <td class="product-result">{/ helpers.databaseToHtmlView(x.symmetry)/}</td>
+                                                        <td class="product-result"><a href="http://www.diamondexchange.com.au/education/diamonds-explained-4c-s/">Learn More</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Fluorescence:</td>
+                                                        <td class="product-result">{/ helpers.databaseToHtmlView(x.fluorescence)/}</td>
+                                                        <td class="product-result"><a href="http://www.diamondexchange.com.au/education/diamonds-explained-4c-s/">Learn More</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="product-result"><a href="javascript:void(0);" ng-Click="openPopup(x.stone_video)" ng-if="x.stone_video">View Diamond Video</a></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td width="20" class="divider-line"></td>
+                                            <td width="20"></td>
+                                            <td valign="top">
+                                                <table>
+                                                    <tr>
+                                                        <td>Culet:</td>
+                                                        <td class="product-result" data-ng-bind="x.culet && (x.culet | uppercase) || 'NA'"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Depth(%):</td>
+                                                        <td class="product-result">{/ x.depth_percentage/}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Table(%):</td>
+                                                        <td class="product-result">{/ x.table_percentage/}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Size(mm):</td>
+                                                        <td class="product-result">{/ x.length + "x" + x.width + "x" + x.depth/}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Girdle:</td>
+                                                        <td class="product-result" data-ng-bind="x.girdle && (x.girdle | uppercase) || 'NA'"></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td width="20" class="divider-line"></td>
+                                            <td width="20"></td>
+                                            <td valign="top">
+                                                <table>
+                                                    <tr>
+                                                        <td>Price(incl. GST):</td>
+                                                        <td class="product-result">{/ (x.price * (100 + gst) / 100) | currency/}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Price(excl. GST):</td>
+                                                        <td class="product-result">{/ x.price | currency /}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" class="product-result"><a href="http://www.diamondexchange.com.au/education/our-buying-guide/custom-design-rings/">Check out our Diamond Buying Guide</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" class="product-result"><a href="javascript:void(0);" productDetails="/contact-us?ref={/ x.stock_no/}&cut={/ helpers.databaseToHtmlView(x.cut)/}&clarity={/ x.clarity/}&colour={/ x.colour/}&carat={/ x.weight/}&shape={/ x.shapeVal/}&type=sNo&price={/ x.price | currency /}" class="makeEnquiry"><strong>Enquire about this Diamond</strong></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Stock No:</td>
+                                                        <td class="product-result">{/ x.stock_no/}</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="13">
+                                <div class="diamond-modal" style="display:none;"> 
+
+                                    <!-- top part -->
+                                    <div class="diamond-modal-content"> 
+                                        <!-- left portion -->
+                                        <div class="diamond-modal-content-inr"><img ng-src="{/ x.stone_image || 'http://www.diamondexchange.com.au/template/images/diamond-exchange/diamond-shapes/sample/' + x.shapeVal.toLowerCase() + '.jpg'/}" /> </div>
+                                        <!-- right portion -->
+                                        <div class="diamond-modal-content-inr">
+                                            <h2 ng-bind="helpers.caratTwoDecimals(x.weight) + ' ' + x.shapeVal + ' Diamond'"></h2>
+                                            <table width="100%">
+                                                <tr>
+                                                    <td>Carat</td>
+                                                    <td><span ng-bind="helpers.caratTwoDecimals(x.weight)"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Colour</td>
+                                                    <td><span ng-bind="x.colour"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Clarity</td>
+                                                    <td><span ng-bind="x.clarity"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cut</td>
+                                                    <td><span ng-bind="helpers.databaseToHtmlView(x.cut)"></span></td>
+                                                </tr>
+                                            </table>
+                                            <p class="currency-show" ng-bind="x.price | currency"></p>
+                                            <div ng-if="!isBuyButtonHidden">
+                                                <input type="button" value="Buy Diamond" data-id-val="{/x/}" class="select-diamond-btn diamond-buy">
+                                                <p class="settings-not-present-txt">or <a href="javscript:;" id="diamondSelected_{/x.id/}" data-id-val="{/x/}" class="diamond-engagement-rings">Design an Engagement Ring with this Diamond</a> </span> </p>
+                                            </div>
+                                            <div ng-if="isBuyButtonHidden" class="settings-present-btn">
+                                                <input id="diamondSelected_{/x.id/}" type="button" value="Select Diamond" data-id-val="{/x/}" class="select-diamond-btn diamond-engagement-rings">
+                                                <p class="settings-not-present-txt">or <a href="javscript:;" class="select-loose-diamond">Select a Loose Diamond</a> </span> </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- bottom part --> 
+                                    <span class="clear"></span>
+                                    <div class="modal-diamond-desc">
+                                        <table width="100%">
+                                            <tr>
+                                                <td>Stock No:<span ng-bind="x.stock_no"></span></td>
+                                                <td>Symmetry:<span ng-bind="helpers.databaseToHtmlView(x.symmetry)"></span></td>
+                                                <td>Table(%):<span ng-bind="x.table_percentage"></span></td>
+                                                <td>Price(incl GST): <span ng-bind="x.price * (100 + gst) / 100 | currency"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Certified By:<span ng-bind="x.certificate_type"></span></td>
+                                                <td>Fluorescence:<span ng-bind="helpers.databaseToHtmlView(x.fluorescence)"></span></td>
+                                                <td>Size(MM):<span ng-bind="x.length + 'x' + x.width + 'x' + x.depth"></span></td>
+                                                <td>Price(excl GST): <span ng-bind="x.price | currency"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Shape:<span ng-bind="x.shapeVal"></span></td>
+                                                <td>Culet:<span data-ng-bind="x.culet && (x.culet | uppercase) || 'NA'"></span></td>
+                                                <td>Girdle:<span data-ng-bind="x.girdle && (x.girdle | uppercase) || 'NA'"></span></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Polish:<span ng-bind="helpers.databaseToHtmlView(x.polish)"></span></td>
+                                                <td>Depth(%):<span ng-bind="x.depth_percentage"></span></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-show="total > limit">
+        <pagination total-items="total" ng-model="pageno" ng-change="pageChanged()" items-per-page="limit" max-size="limit"></pagination>
+    </div>
+</div>

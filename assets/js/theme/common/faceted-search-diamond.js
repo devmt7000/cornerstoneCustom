@@ -5,10 +5,11 @@ import Url from 'url';
 import urlUtils from './url-utils';
 import modalFactory from '../global/modal';
 import collapsibleFactory from './collapsible';
-import { Validators } from './form-utils';
 import nod from './nod';
 import { ConfigDiamond } from '../diamond/config-diamond';
 import 'ion-range-slider';
+
+
 /**
  * Faceted search view component
  */
@@ -59,14 +60,16 @@ class FacetedSearchDiamond {
         this.collapsedFacets = [];
         this.collapsedFacetItems = [];
 
+        /* global angular:true*/
+        /* slint no-undef: "error"*/
+
+        this.diamondController = angular.element($('#bodyDiamondsController')).scope();
         // Init collapsibles
         collapsibleFactory();
 
-        //
+        this.optionsRequest = [];
         this.initRangeSliders();
 
-        // Init price validator
-        this.initPriceValidator();
 
         // Show limited items by default
         $(this.options.facetNavListSelector).each((index, navList) => {
@@ -109,31 +112,15 @@ class FacetedSearchDiamond {
         if (content) {
             this.callback(content);
         }
-
-        // Init collapsibles
-        collapsibleFactory();
-
-        // Init price validator
-        this.initPriceValidator();
-
-        // Restore view state
-        this.restoreCollapsedFacets();
-        this.restoreCollapsedFacetItems();
-
-        // Bind events
-        this.bindEvents();
     }
 
     updateView() {
-        $(this.options.blockerSelector).show();
-
         api.getPage(urlUtils.getUrl(), this.requestOptions, (err, content) => {
             $(this.options.blockerSelector).hide();
 
             if (err) {
                 throw new Error(err);
             }
-
             // Refresh view with new content
             this.refreshView(content);
         });
@@ -159,14 +146,11 @@ class FacetedSearchDiamond {
 
     toggleFacetItems($navList) {
         const id = $navList.attr('id');
-
         // Toggle depending on `collapsed` flag
         if (_.includes(this.collapsedFacetItems, id)) {
             this.getMoreFacetResults($navList);
-
             return true;
         }
-
         this.collapseFacetItems($navList);
 
         return false;
@@ -220,7 +204,6 @@ class FacetedSearchDiamond {
 
     collapseFacet($accordionToggle) {
         const collapsible = $accordionToggle.data('collapsible-instance');
-
         collapsible.close();
     }
 
@@ -249,7 +232,7 @@ class FacetedSearchDiamond {
         if (key === null) {
             return true;
         }
-      // get character
+        // get character
         let keychar = String.fromCharCode(key);
         keychar = keychar.toLowerCase();
         const goodsLower = goods.toLowerCase();
@@ -278,120 +261,238 @@ class FacetedSearchDiamond {
         if ($(this.options.facetedRangeSlider).length === 0) {
             return;
         }
-        const $slider = $(this.options.facetedRangeSlider);
-        const parent = this;
-        $slider.each((index, slide) => {
-            const facet = $(slide).attr('facet');
 
-            switch (facet) {
-            case ConfigDiamond.types.price.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    min: ConfigDiamond.types.price.range.min,
-                    max: ConfigDiamond.types.price.range.max,
-                    from: ConfigDiamond.types.price.range.min,
-                    to: ConfigDiamond.types.price.range.max,
-                    step: 100,
-                });
-                break;
-            case ConfigDiamond.types.carat.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    step: 0.5,
-                    min: ConfigDiamond.types.carat.range.min,
-                    max: ConfigDiamond.types.carat.range.max,
-                    from: ConfigDiamond.types.carat.range.min,
-                    to: ConfigDiamond.types.carat.range.max,
-                });
-                break;
-            case ConfigDiamond.types.color.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    values: ConfigDiamond.types.color.values,
-                    grid: true,
-                });
-                break;
-            case ConfigDiamond.types.clarity.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    values: ConfigDiamond.types.clarity.values,
-                    grid: true,
-                });
-                break;
-            case ConfigDiamond.types.cut.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    values: ConfigDiamond.types.cut.values,
-                    grid: true,
-                });
-                break;
-            case ConfigDiamond.types.polish.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    values: ConfigDiamond.types.polish.values,
-                    grid: true,
-                });
-                break;
-            case ConfigDiamond.types.symmetry.name :
-                $(slide).ionRangeSlider({
-                    hide_min_max: true,
-                    keyboard: true,
-                    type: 'double',
-                    min_interval: 0,
-                    values: ConfigDiamond.types.symmetry.values,
-                    grid: true,
-                });
-                break;
-            default:
-                break;
-            }
-            $(slide).parent().find('fieldset input').on('keypress', (event) => {
-                if (event.which === 13) {
-                    $(this).trigger('blur');
-                    $(this).focus();
+        const $sliders = $(this.options.facetedRangeSlider);
+        const parent = this;
+        const urlObj = Url.parse(window.location.href, true);
+
+        $sliders.each((index, slide) => {
+            const $facet = $(slide);
+            let $from = 0;
+            let $to = 0;
+            let idx = -1;
+            const type = $facet.attr('facet');
+            if (type === ConfigDiamond.types[ConfigDiamond.pos.PRICE].name ||
+                    type === ConfigDiamond.types[ConfigDiamond.pos.CARAT].name) {
+                idx = type === ConfigDiamond.types[ConfigDiamond.pos.PRICE].name ? ConfigDiamond.pos.PRICE : ConfigDiamond.pos.CARAT;
+                const config = ConfigDiamond.types[idx];
+                $from = config.range.min;
+                $to = config.range.max;
+
+                if (type === ConfigDiamond.types[ConfigDiamond.pos.PRICE].name) {
+                    if (urlObj.query.min_price) {
+                        $from = urlObj.query.min_price;
+                    }
+                    if (urlObj.query.min_price) {
+                        $to = urlObj.query.max_price;
+                    }
+                } else if (type === ConfigDiamond.types[ConfigDiamond.pos.CARAT].name) {
+                    if (urlObj.query[config.id] && urlObj.query[config.id].length > 0) {
+                        if (Array.isArray(urlObj.query[config.id])) {
+                            urlObj.query[config.id].sort(parent.orderValues);
+                            $from = urlObj.query[config.id][0];
+                            $to = urlObj.query[config.id][urlObj.query[config.id].length - 1];
+                        } else {
+                            $from = urlObj.query[config.id];
+                            $to = $from;
+                        }
+                    }
                 }
-                return parent.onlyNumbers(event, '1234567890.');
+
+                $facet.ionRangeSlider({
+                    hide_min_max: true,
+                    keyboard: true,
+                    type: 'double',
+                    min_interval: 0,
+                    min: config.range.min,
+                    max: config.range.max,
+                    from: $from,
+                    to: $to,
+                    step: config.range.step,
+                    onFinish: this.fireRequestFacetRange,
+                });
+            } else {
+                switch (type) {
+                case ConfigDiamond.types[ConfigDiamond.pos.COLOR].name :
+                    idx = ConfigDiamond.pos.COLOR;
+                    break;
+                case ConfigDiamond.types[ConfigDiamond.pos.CLARITY].name :
+                    idx = ConfigDiamond.pos.CLARITY;
+                    break;
+                case ConfigDiamond.types[ConfigDiamond.pos.CUT].name :
+                    idx = ConfigDiamond.pos.CUT;
+                    break;
+                case ConfigDiamond.types[ConfigDiamond.pos.POLISH].name :
+                    idx = ConfigDiamond.pos.POLISH;
+                    break;
+                case ConfigDiamond.types[ConfigDiamond.pos.SYMMETRY].name :
+                    idx = ConfigDiamond.pos.SYMMETRY;
+                    break;
+                default:
+                    idx = -1;
+                    break;
+                }
+
+                if (idx > 0) {
+                    $from = ConfigDiamond.types[idx].values.length - 1;
+                    $to = 0;
+
+                    if (urlObj.query[ConfigDiamond.types[idx].id] && urlObj.query[ConfigDiamond.types[idx].id].length > 0) {
+                        if (Array.isArray(urlObj.query[ConfigDiamond.types[idx].id])) {
+                            for (const value of urlObj.query[ConfigDiamond.types[idx].id]) {
+                                const key = ConfigDiamond.types[idx].keys.indexOf(value);
+                                if (key !== -1) {
+                                    $from = (key < $from) ? key : $from;
+                                    $to = (key > $to) ? key : $to;
+                                }
+                            }
+                        } else {
+                            $from = urlObj.query[ConfigDiamond.types[idx].id];
+                            $to = $from;
+                        }
+                    }
+                    if ($to === 0 && $from === ConfigDiamond.types[idx].values.length - 1) {
+                        $to = $from;
+                        $from = 0;
+                    }
+
+                    $facet.ionRangeSlider({
+                        hide_min_max: true,
+                        keyboard: true,
+                        type: 'double',
+                        min_interval: 0,
+                        values: ConfigDiamond.types[idx].values,
+                        grid: true,
+                        onFinish: this.fireRequestFacetRange,
+                        from: $from,
+                        to: $to,
+                    });
+                }
+            }
+
+            const inputs = $facet.parent().find('fieldset input');
+            this.updateFacetRangeInputs($facet);
+            inputs.each((___, input) => {
+                $(input).attr('facet', $facet.attr('id'));
+
+                $(input).on('keypress', (event) => {
+                    if (event.which === 13) {
+                        $(this).trigger('blur');
+                        $(this).focus();
+                    }
+                    return parent.onlyNumbers(event, '1234567890.');
+                });
+
+                $(input).on('change', (event) => {
+                    const inputSlider = $(event.currentTarget);
+                    const slider = $('#'.concat(inputSlider.attr('facet'))).data('ionRangeSlider');
+                    if (parent.validateRangeField(event) === true) {
+                        const range = String(inputSlider.attr('id')).split('_')[0];
+                        if (range === 'min') {
+                            slider.update({ from: inputSlider.val() });
+                        } else {
+                            slider.update({ to: inputSlider.val() });
+                        }
+                        parent.fireRequestFacetRange(slider.result);
+                    } else {
+                        parent.updateFacetRangeInputs($facet);
+                    }
+                });
             });
+
+            $facet.on('change', (event) => {
+                parent.updateRequestOptions(event);
+            });
+
+            parent.optionsRequest.push($facet);
         });
     }
 
-    // Private methods
-    initPriceValidator() {
-        if ($(this.options.priceRangeFormSelector).length === 0) {
-            return;
-        }
-
-        const validator = nod();
-        const selectors = {
-            errorSelector: this.options.priceRangeErrorSelector,
-            fieldsetSelector: this.options.priceRangeFieldsetSelector,
-            formSelector: this.options.priceRangeFormSelector,
-            maxPriceSelector: this.options.priceRangeMaxPriceSelector,
-            minPriceSelector: this.options.priceRangeMinPriceSelector,
-        };
-
-        Validators.setMinMaxPriceValidation(validator, selectors);
-
-        this.priceRangeValidator = validator;
+    orderValues(a, b) {
+        return a - b;
     }
+
+    findProducts(urlParam) {
+        let url = urlParam;
+        if (url) {
+            url = this.diamondController.getUrlSearch(Url.parse(url, true));
+        } else {
+            url = Url.parse(window.location.href, true);
+            delete url.query.page;
+            url = this.diamondController.getUrlSearch(url);
+        }
+        urlUtils.goToUrl(Url.format({ pathname: url.pathname, search: urlUtils.buildQueryString(url.query) }));
+    }
+
+    fireRequestFacetRange() {
+        this.diamondController = angular.element($('#bodyDiamondsController')).scope();
+        let url = Url.parse(window.location.href, true);
+        delete url.query.page;
+        url = this.diamondController.getUrlSearch(url);
+        urlUtils.goToUrl(Url.format({ pathname: url.pathname, search: urlUtils.buildQueryString(url.query) }));
+    }
+
+    validateRangeField(event) {
+        const $input = $(event.currentTarget);
+        const parent = $input.parent();
+        const ranges = String($input.attr('id')).split('_');
+        const range = ranges[0];
+        const slider = $('#'.concat($input.attr('facet'))).data('ionRangeSlider');
+        const error = parent.find('#'.concat($input.attr('id'), '-error'));
+
+        this.clearMessageError(parent);
+
+        if (range === 'min') {
+            if ($input.val() < slider.result.min) {
+                parent.addClass('form-field--error');
+                error.html('Min '.concat(ranges[1], ' is ', slider.result.min));
+                $input.val(slider.result.min);
+                return false;
+            }
+        } else if (range === 'max') {
+            if ($input.val() > slider.result.max) {
+                parent.addClass('form-field--error');
+                error.html('Max '.concat(ranges[1], ' is ', slider.result.max));
+                $input.val(slider.result.max);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    updateFacetRangeInputs(facet) {
+        const name = facet.attr('facet');
+
+        let range = facet.parent().find('fieldset #min_'.concat(name));
+        range.val(facet.data('from'));
+
+        range = facet.parent().find('fieldset #max_'.concat(name));
+        range.val(facet.data('to'));
+    }
+
+    clearMessageError(inputParent) {
+        inputParent.find('.form-inlineMessage').html('');
+        if (inputParent.hasClass('form-field--error')) {
+            inputParent.removeClass('form-field--error');
+        }
+    }
+
+    updateRequestOptions(event) {
+        const $this = $(event.currentTarget);
+        const name = $this.attr('facet');
+        switch (name) {
+        case ConfigDiamond.types[ConfigDiamond.pos.PRICE].name:
+        case ConfigDiamond.types[ConfigDiamond.pos.CARAT].name :
+            $this.parent().find('fieldset input').each((__, input) => {
+                this.clearMessageError($(input).parent());
+            });
+            this.updateFacetRangeInputs($this);
+            break;
+        default:
+            break;
+        }
+    }
+    // Private methods
 
     restoreCollapsedFacetItems() {
         const $navLists = $(this.options.facetNavListSelector);
@@ -429,7 +530,7 @@ class FacetedSearchDiamond {
 
     bindEvents() {
         // Clean-up
-        this.unbindEvents();
+        // this.unbindEvents();
 
         // DOM events
         $(window).on('statechange', this.onStateChange);
@@ -482,14 +583,18 @@ class FacetedSearchDiamond {
 
     onFacetClick(event) {
         const $link = $(event.currentTarget);
-        const url = $link.attr('href');
+
+        let url = null;
+        if ($link.hasClass('pagination-link')) {
+            url = $link.attr('href');
+        }
 
         event.preventDefault();
 
         $link.toggleClass('is-selected');
 
+        this.findProducts(url);
         // Update URL
-        urlUtils.goToUrl(url);
 
         if (this.options.modalOpen) {
             this.options.modal.close();
