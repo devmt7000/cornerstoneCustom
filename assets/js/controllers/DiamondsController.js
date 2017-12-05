@@ -1,20 +1,15 @@
 require('angular');
-require('angular-cookies');
 import { ConfigDiamond } from '../theme/diamond/config-diamond';
 
 /* global angular:true*/
 /* global $:true*/
 /* slint no-undef: "error"*/
 
-const appDiamond = angular.module('diamondsApp', ['ngCookies']);
-
-appDiamond.config(($interpolateProvider) => {
+angular.module('diamondsApp', []).config(($interpolateProvider) => {
     $interpolateProvider.startSymbol('{/');
     $interpolateProvider.startSymbol('/}');
-});
-
-const diamondsController = appDiamond.controller('diamondsController', ['$scope', '$cookies', '$filter',
-    ($scope, $cookies, $filter) => {
+}).controller('diamondsController', ['$scope', '$filter',
+    ($scope, $filter) => {
         'use strict';
 
         /* eslint no-param-reassign: ["error", {"props": false }]*/
@@ -127,5 +122,3 @@ const diamondsController = appDiamond.controller('diamondsController', ['$scope'
             return null;
         };
     }]);
-
-export { appDiamond, diamondsController };
