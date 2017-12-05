@@ -4,17 +4,18 @@ import { ConfigDiamond } from '../theme/diamond/config-diamond';
 /* global angular:true*/
 /* global $:true*/
 /* slint no-undef: "error"*/
-
-angular.module('diamondsApp', []).config(($interpolateProvider) => {
-    $interpolateProvider.startSymbol('{/');
-    $interpolateProvider.startSymbol('/}');
-}).controller('diamondsController', ['$scope', '$filter',
-    ($scope, $filter) => {
-        'use strict';
-
-        /* eslint no-param-reassign: ["error", {"props": false }]*/
-
-        $scope.init = function init() {
+/* eslint no-param-reassign: ["error", {"props": false }]*/
+/* eslint func-names: ["error", "never"] */
+/* eslint wrap-iife: ["error", "inside"] */
+(function () {
+    'use strict';
+    const app = angular.module('diamondsApp', []);
+    app.config(($interpolateProvider) => {
+        $interpolateProvider.startSymbol('{/');
+        $interpolateProvider.startSymbol('/}');
+    });
+    app.controller('diamondsController', ['$scope', '$filter', ($scope, $filter) => {
+        $scope.init = () => {
             $scope.diamonds = [];
             $scope.shape = $('#facetedSearch-content--shape');
             $scope.rangeSlider = $('#facetedSearchDiamond .range-slider');
@@ -22,11 +23,11 @@ angular.module('diamondsApp', []).config(($interpolateProvider) => {
             $scope.carat = $filter('filter')($scope.rangeSlider, { id: 'range-'.concat(ConfigDiamond.types[ConfigDiamond.pos.CARAT].name) })[0];
         };
 
-        $scope.setContext = function setContext(context) {
+        $scope.setContext = (context) => {
             $scope.context = context;
         };
 
-        $scope.getUrlSearch = function getUrlSearch(urlObj) {
+        $scope.getUrlSearch = (urlObj) => {
             const query = {};
             angular.copy(urlObj.query, query);
             const shapes = $scope.shape.find('li a.is-selected');
@@ -91,9 +92,9 @@ angular.module('diamondsApp', []).config(($interpolateProvider) => {
             return urlObj;
         };
 
-        $scope.getProducts = function getProducts() {
+        $scope.getProducts = (function () {
             return;
-        };
+        })();
 
         $scope.order = (predicate, e) => {
             $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
@@ -118,7 +119,8 @@ angular.module('diamondsApp', []).config(($interpolateProvider) => {
             $scope.getdata();
         };
 
-        $scope.getdata = function getdata() {
+        $scope.getdata = (function () {
             return null;
-        };
+        })();
     }]);
+})();
